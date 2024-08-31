@@ -41,9 +41,9 @@ RUN apt-get update \
     --base-dir /home --groups sudo --no-user-group --create-home \
     && echo 'shaun:shaun' | chpasswd \
     && echo 'root:root' | chpasswd \
-    && /opt/miniconda3/bin/conda init bash \
     && update-alternatives --install /usr/bin/java java /opt/jdk-11/bin/java 11 \
     && update-alternatives --install /usr/bin/javac javac /opt/jdk-11/bin/javac 11 \
+    && /opt/miniconda3/bin/conda init bash \ 
     && git config --global user.name "Shaun" \
     && git config --global user.email "the_sheep@gmail.com" \
     && git config --global init.defaultBranch main 

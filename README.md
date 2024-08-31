@@ -1,5 +1,7 @@
 # I've learned Docker and try to build my own image for a Linux working environment
 
+## 1. Build the image
+
 Open terminal and navigate to this folder and run the command:
 
 ```pwsh
@@ -19,6 +21,8 @@ docker inspect myu:dev
 ```
 
 Try to reduce the layers of the image to make it smaller and more efficient if possible.
+
+## 2. Run the container
 
 To run the container in interactive mode (`-i`) with the name `myu` and the image `myu:dev` with the command `bash`:
 
@@ -44,16 +48,18 @@ List all containers to confirm:
 docker ps -a
 ```
 
-This image contains:
+## 3. What's in the image?
+
+Currently, the total size of the image is about 1.14GB including:
 
 - Ubuntu 22.04 base image (about 72MB)
 
-- Java 11.0.24 linux x64 (at the time write this - about 271MB)
-  - Here I use the local compressed file from the official website to install Java, with multi-stage build, so that the compressed file is not included in the final image. The compressed file is in the `stuffs` folder. The file is `openjdk-11-linux-x64.tar.gz`.
+- Java 11.0.24 linux x64 (about 271MB)
+  - Here I use the local compressed file from the official website to install Java, with multi-stage build, so that the compressed file is not included in the final image. The compressed file is `openjdk-11-linux-x64.tar.gz` in the `stuffs` folder.
   - The advantage is that you don't have to download from the internet every time you build the image. If you want to get update of java 11, just download the new compressed archive and overwrite *that* file in the `stuffs` folder.
   - If you want to use another version of Java (like 8 - 17 - 19 - 21 - etc) you can do the same what I did with Java 11. Or you can use the command like `apt`/`apt-get` to install Java from the repository.
 
-- Conda base environment
+- Conda base environment (about 658MB)
   - Method similar to I did with Java 11. The installation file is `Miniconda3-latest-Linux-x86_64.sh` in the `stuffs` folder.
   - To init the conda environment in bash, run the command:
 
@@ -61,7 +67,7 @@ This image contains:
     /opt/miniconda3/bin/conda init bash
     ```
 
-  - It is not recommended to work with the base environment. You should create a new environment with:
+  - It is not recommended to work with the base environment. You should create a new environment (of course take more space) with:
   
     ```bash
     conda create --name default --clone base
@@ -73,7 +79,7 @@ This image contains:
     echo "conda activate default" >> /home/son/.bashrc
     ```
 
-    to activate the environment by default.-
+    to activate the environment by default.
   - You can also add config, for example:
 
     ```bash
@@ -82,7 +88,7 @@ This image contains:
 
     to add the conda-forge channel.
 
-- Git - with some configurations in dockerfile, modify it if you want to use your own configurations. Some steps you need to do:
+- Git (about 66 MB)- with some configurations in dockerfile, modify it if you want to use your own configurations. Some steps you need to do:
   
   Generate key:
 
@@ -131,6 +137,10 @@ This image contains:
     git push -u origin main
     ```
 
-- Another packages (add to the `ubuntu.Dockerfile` if you need more)
+- Some packages: vim, openssh-client, ca-certificates (about 63 MB), add to the `ubuntu.Dockerfile` if you need more.
+  
+You can add or remove components to the image as needed. Rebuild the image with the same `docker build` command above to update the latest changes in the Dockerfile to the image. You also need to run the container again to apply the changes.
 
-Rebuild the image with the same `docker build` command above to update the latest changes in the Dockerfile to the image. You also need to run the container again to apply the changes.
+## 4. Next steps
+
+- Going to setup more tools and configurations to the image.
